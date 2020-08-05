@@ -11,9 +11,9 @@ defaults: &defaults
     # specify the version you desire here
     - image: circleci/ruby:2.7.1-node-browsers
       environment:
-        - DB_HOST: 127.0.0.1
         - RAILS_ENV: test
         - BUNDLE_JOBS: 4
+        - DATABASE_URL: postgres://postgres:@127.0.0.1/tenmei_doc_test
 
     # Specify service dependencies here if necessary
     # CircleCI maintains a library of pre-built images
@@ -21,7 +21,7 @@ defaults: &defaults
     - image: circleci/postgres:11-alpine-ram
       environment:
         POSTGRES_USER: postgres
-        POSTGRES_DB: work_test
+        POSTGRES_DB: tenmei_doc_test
         POSTGRES_PASSWORD: ""
 
   working_directory: ~/repo
