@@ -1,0 +1,105 @@
+# Ruby CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-ruby/ for more details
+#
+version: 2.1
+orbs:
+  ruby: circleci/ruby@0.2.1
+
+defaults: &defaults
+  docker:
+    # specify the version you desire here
+    - image: circleci/ruby:2.7.1-node-browsers
+      environment:
+        - DB_HOST: 127.0.0.1
+        - RAILS_ENV: test
+        - BUNDLE_JOBS: 4
+
+    # Specify service dependencies here if necessary
+    # CircleCI maintains a library of pre-built images
+    # documented at https://circleci.com/docs/2.0/circleci-images/
+    - image: circleci/postgres:11-alpine-ram
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_DB: work_test
+        POSTGRES_PASSWORD: ""
+
+  working_directory: ~/repo
+
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - run: gem install bundler -v 2.1.2
+      - ruby/load-cache
+      - ruby/install-deps
+      - ruby/save-cache
+
+      # Database setup
+      - run: bundle exec rake db:create
+      - run: bundle exec rake db:schema:load
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - ./*
+
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: gem install bundler -v 2.1.2
+      - ruby/load-cache
+      - ruby/install-deps
+      - ruby/run-tests
+
+  rubocop:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: gem install bundler -v 2.1.2
+      - ruby/load-cache
+      - ruby/install-deps
+      # run rubocop
+      - run:
+          name: run rubocop
+          command: |
+            bundle exec rubocop \
+              --parallel \
+              -f html \
+              -o /tmp/artifacts/rubocop-results.html \
+              -f progress
+
+  brakeman:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: gem install bundler -v 2.1.2
+      - ruby/load-cache
+      - ruby/install-deps
+      # run brakeman
+      - run:
+          name: run brakeman
+          command: |
+            bundle exec brakeman -o /tmp/artifacts/brakeman_output.html
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - rubocop:
+          requires:
+            - build
+      - brakeman:
+          requires:
+            - build
