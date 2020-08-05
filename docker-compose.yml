@@ -13,6 +13,8 @@ services:
       - "/work/.git"
     depends_on:
       - db
+    environment:
+      DATABASE_URL: postgres://postgres:@db/
   db:
     image: postgres:11-alpine
     volumes:
