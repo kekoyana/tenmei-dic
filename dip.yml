@@ -17,11 +17,6 @@ interaction:
     service: web
     command: bundle
 
-  rake:
-    description: Run Rake commands
-    service: web
-    command: bundle exec rake
-
   rubocop:
     description: Run RuboCop commands
     service: web
