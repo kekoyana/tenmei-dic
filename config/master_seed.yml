@@ -1,0 +1,13 @@
+default: &default
+  seed_sheets:
+    article: "https://script.google.com/macros/s/AKfycbwT1IC_ecuG3phZHTSNQ4e8PJF6EEXM_uzFp4AfzqACrVhQHi2I/exec"
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
+
