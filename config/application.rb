@@ -33,5 +33,7 @@ module TenmeiDic
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    config.x.master_seed = config_for(:master_seed)
   end
 end
