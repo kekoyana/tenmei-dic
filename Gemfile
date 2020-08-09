@@ -10,6 +10,8 @@ gem 'rails', '~> 6.0.3', '>= 6.0.3.2'
 gem 'pg', '>= 0.18', '< 2.0'
 
 gem 'bootsnap'
+gem 'httpclient'
+gem 'oj'
 gem 'puma'
 
 group :development, :test do
