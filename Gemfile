@@ -38,4 +38,5 @@ group :test do
   gem 'rspec-json_matchers'
   gem 'rspec_junit_formatter'
   gem 'selenium-webdriver', require: false
+  gem 'webmock'
 end

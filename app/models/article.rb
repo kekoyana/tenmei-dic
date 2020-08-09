@@ -7,6 +7,7 @@ class Article < ApplicationRecord
   validates :text,         presence: true
 
   def self.by_data(data)
-    new(data)
+    import_attr = %w[id name kana article_type text]
+    new(data.slice(*import_attr))
   end
 end

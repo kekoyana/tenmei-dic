@@ -12,20 +12,20 @@ RSpec.describe Article, type: :model do
   end
 
   describe '.by_data' do
-    subject { described_class.by_data(data) }
+    subject(:instance) { described_class.by_data(data) }
 
     let(:data) do
       {
-        "name"         => "名称",
-        "kana"         => "めいしょう",
-        "article_type" => "強者",
-        "text"         => "ほんぶん",
+        'name'         => '名称',
+        'kana'         => 'めいしょう',
+        'article_type' => '強者',
+        'text'         => 'ほんぶん',
       }
     end
 
     it do
       is_expected.to be_a_kind_of Article
-      expect(subject.name).to eq "名称"
+      expect(instance.name).to eq '名称'
     end
   end
 end
