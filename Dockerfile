@@ -1,4 +1,4 @@
-FROM ruby:2.7.1-alpine
+FROM ruby:2.7.1-slim-buster
 
 ENV LANG=C.UTF-8 \
     BUNDLER_VERSION=2.1.4 \
@@ -6,20 +6,19 @@ ENV LANG=C.UTF-8 \
     BUNDLE_PATH=/usr/local/bundle \
     PATH=$PATH:/work/bin
 
-RUN apk add --update --no-cache \
+RUN apt update
+RUN apt install -y \
     bash \
-    build-base \
+    build-essential \
     nodejs \
     yarn \
-    postgresql-dev \
-    postgresql \
+    libpq-dev \
     git \
     less \
     curl \
     vim \
     wget \
-    chromium \
-    chromium-chromedriver && \
+    chromium && \
     gem install bundler -v ${BUNDLER_VERSION} && \
     gem update --system
 
