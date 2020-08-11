@@ -6,21 +6,17 @@ ENV LANG=C.UTF-8 \
     BUNDLE_PATH=/usr/local/bundle \
     PATH=$PATH:/work/bin
 
-RUN apt update
-RUN apt install -y \
-    bash \
-    build-essential \
+RUN apt-get update && apt-get install -qq -y --no-install-recommends \
     nodejs \
     yarn \
+    postgresql-client \
     libpq-dev \
-    git \
-    less \
     curl \
     vim \
-    wget \
-    chromium && \
+    wget && \
     gem install bundler -v ${BUNDLER_VERSION} && \
-    gem update --system
+    gem update --system && \
+    apt-get -y clean
 
 ENV APP_PATH /work
 WORKDIR $APP_PATH
