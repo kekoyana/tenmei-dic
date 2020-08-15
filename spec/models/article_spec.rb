@@ -16,10 +16,10 @@ RSpec.describe Article, type: :model do
 
     let(:data) do
       {
-        'name'         => '名称',
-        'kana'         => 'めいしょう',
-        'article_type' => '強者',
-        'text'         => 'ほんぶん',
+        'name'     => '名称',
+        'kana'     => 'めいしょう',
+        'category' => '強者',
+        'text'     => 'ほんぶん',
       }
     end
 

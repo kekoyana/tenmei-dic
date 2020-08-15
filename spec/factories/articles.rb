@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :article do
     name { '梁山泊' }
     kana { 'りょうざんぱく' }
-    article_type { 1 }
+    category { 1 }
     text { '108星の英傑たちが集まる水に囲まれた山塞' }
   end
 end
