@@ -16,7 +16,7 @@ RSpec.describe Article::Fetcher, type: :model do
             delete_flg: '',
             name: '徽宗',
             kana: 'きそう',
-            article_type: '強者',
+            category: '強者',
             text: '北宋の第8代皇帝',
           },
           {
@@ -24,7 +24,7 @@ RSpec.describe Article::Fetcher, type: :model do
             delete_flg: 'true',
             name: '林霊素',
             kana: 'りんれいそ',
-            article_type: '強者',
+            category: '強者',
             text: '北宋の徽宗皇帝時代の道士',
           },
         ],
