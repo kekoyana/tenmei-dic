@@ -15,6 +15,10 @@ RSpec.describe KanaValidator, type: :validator do
       attr_accessor :kana
 
       validates :kana, kana: true
+
+      def self.model_name
+        ActiveModel::Name.new(self, nil, 'temp')
+      end
     end
   end
 
@@ -30,9 +34,24 @@ RSpec.describe KanaValidator, type: :validator do
     it { is_expected.to be_valid }
   end
 
+  context '空文字のとき' do
+    let(:kana) { '' }
+
+    it { is_expected.to be_valid }
+  end
+
+  context 'nilのとき' do
+    let(:kana) { nil }
+
+    it { is_expected.to be_valid }
+  end
+
   context 'かな+カナのとき' do
     let(:kana) { 'あいうえおア' }
 
-    it { is_expected.to be_invalid }
+    it 'エラーとなること' do
+      is_expected.to be_invalid
+      expect(instance.errors.messages[:kana]).to include('はかなと半角数字以外の文字が使われています')
+    end
   end
 end
