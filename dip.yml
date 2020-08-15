@@ -22,6 +22,11 @@ interaction:
     service: web
     command: bundle exec rubocop
 
+  yaml-lint:
+    description: Run yaml-lint commands
+    service: web
+    command: bundle exec yaml-lint -i config/
+
   rspec:
     description: Run Rspec commands
     service: web
