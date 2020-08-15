@@ -1,0 +1,25 @@
+ja:
+  default_attributes: &default_attributes
+    id: ID
+    created_at: 作成日
+    updated_at: 更新日
+  activerecord:
+    models:
+      article: 記事
+    attributes:
+      article:
+        <<: *default_attributes
+        name: 記事名
+        kana: かな
+        category: カテゴリー
+        categories:
+          hero: 強者
+          prefecture: 府州
+          position: 身分
+          event: イベント
+          command: コマンド
+          topography: 地形
+          parameter: ステータス
+          word: 用語
+          other: その他
+        text: 本文

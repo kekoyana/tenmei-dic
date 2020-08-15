@@ -98,6 +98,10 @@ RSpec/ContextWording:
 RSpec/DescribedClass:
   Enabled: false
 
+# 1つのitｎ中で複数のexpectを使用するので、制限ないほうが良い
+RSpec/ExampleLength:
+  Enabled: false
+
 # subjectがblockでも許可する
 RSpec/ImplicitBlockExpectation:
   Enabled: false
@@ -118,4 +122,3 @@ RSpec/MultipleExpectations:
 # 無理に守ると逆に読みにくくなる。数値は要検討
 RSpec/NestedGroups:
   Max: 5
-
