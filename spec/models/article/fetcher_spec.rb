@@ -4,9 +4,7 @@ require 'rails_helper'
 require 'webmock/rspec'
 
 RSpec.describe Article::Fetcher, type: :model do
-  describe '#fetch_articles' do
-    subject(:fetched) { described_class.new.fetch_articles }
-
+  shared_context 'article request mock' do
     let(:article_url) { Rails.configuration.x.master_seed.seed_sheets[:article] }
     let(:body) do
       {
@@ -38,11 +36,28 @@ RSpec.describe Article::Fetcher, type: :model do
         status: 200
       )
     end
+  end
+
+  describe '.fetch_articles' do
+    include_context 'article request mock'
+    subject(:fetched) { described_class.fetch_articles }
 
     it 'データが取得でき、delete_flgが有効なデータは取得しない' do
       expect(fetched.size).to eq 1
       expect(fetched[0].name).to eq '徽宗'
       expect(fetched[1]).to be_nil
+    end
+  end
+
+  describe '.direct_import' do
+    include_context 'article request mock'
+    subject(:fetched) { described_class.direct_import }
+
+    it 'データがimportされること' do
+      expect { subject }.to change(Article, :count).by(1)
+      Article.last.tap do |article|
+        article.name.to eq '徽宗'
+      end
     end
   end
 end

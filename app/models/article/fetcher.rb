@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Article::Fetcher
-  def fetch_articles
+  def self.fetch_articles
     parsed_fetch['data'].filter_map do |data|
       next if data['delete_flg'].present?
 
@@ -9,21 +9,26 @@ class Article::Fetcher
     end
   end
 
-  private
+  def self.direct_import
+    datum = parsed_fetch['data'].reject do |data|
+      data['delete_flg'].present?
+    end
+    Article.import(datum)
+  end
 
-  def parsed_fetch
+  def self.parsed_fetch
     Oj.load(fetch)
   end
 
-  def fetch
+  def self.fetch
     HTTPClient.new.get_content(seed_url)
   end
 
-  def seed_url
+  def self.seed_url
     config.seed_sheets[:article]
   end
 
-  def config
+  def self.config
     Rails.configuration.x.master_seed
   end
 end

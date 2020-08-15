@@ -18,13 +18,24 @@ class Article < ApplicationRecord
     other:      99, # その他
   }
 
+  def self.by_data(data)
+    new(data_slice(data))
+  end
+
+  def self.import(datum)
+    upsert_all(datum.map(&method(:data_slice)))
+  end
+
+  private
+
   def self.category_str2sym(str)
     enum_hash_i18n(:category).key(str)
   end
 
-  def self.by_data(data)
-    hash = data.slice('id', 'name', 'kana', 'text')
-    hash[:category] = category_str2sym(data['category'])
-    new(hash)
+  def self.data_slice(data)
+    data.sclie('id', 'name', 'kana', 'text')
+        .merge(category: category_str2sym(data['category']))
   end
+
+  def category_str2symbol(str); end
 end
