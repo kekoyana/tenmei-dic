@@ -45,7 +45,7 @@ Metrics/BlockLength:
     - config/environments/*.rb
     - config/routes.rb
     - config/routes/**/*.rb
-    - spec/**/*_spec.rb
+    - spec/**/*.rb
     - spec/factories/*
 
 Metrics/ParameterLists:
@@ -93,6 +93,10 @@ Rails/PluralizationGrammar:
 # https://github.com/rubocop-hq/rubocop-rspec/issues/745
 RSpec/ContextWording:
   Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    - spec/lib/tasks/**/* # tasksのテストはクラスを生成しないので除外
 
 # コードの読みやすさ・テスト対象次第なので、descrived_classを使うことを許容する
 RSpec/DescribedClass:
