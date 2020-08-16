@@ -1,18 +1,27 @@
 # frozen_string_literal: true
 
 module Importer
-  def upsert_all_with_timestamp(hashes)
-    hash_with_timestamp(hashes)
-      .then { |h| upsert_all(h) }
-  end
+  class ImportError < StandardError; end
 
   private
 
-  def hash_with_timestamp(hashes)
+  def valid_upsert_all(instances)
+    instances = instance_with_timestamp(instances)
+    if instances.any?(&:invalid?)
+      error_message = instances.map { |ins| "#{ins.id}:#{ins.errors.full_messages}" }
+      Rails.logger.error(error_message)
+      raise(ImportError, error_message)
+    end
+
+    upsert_all(instances.map(&:attributes)) # rubocop:disable Rails/SkipsModelValidations
+  end
+
+  def instance_with_timestamp(instances)
     time = Time.current
-    hashes.map do |hash|
-      hash[:created_at] = hash[:updated_at] = time
-      hash
+    instances.map do |instance|
+      instance.created_at = time
+      instance.updated_at = time
+      instance
     end
   end
 end

@@ -3,7 +3,9 @@
 class Article::Fetcher
   def self.fetch_articles
     parsed_fetch['data'].filter_map do |data|
+      next if data.blank?
       next if data['delete_flg'].present?
+      next if data['text'].blank?
 
       Article.by_data(data)
     end
@@ -11,7 +13,7 @@ class Article::Fetcher
 
   def self.direct_import
     datum = parsed_fetch['data'].reject do |data|
-      data['delete_flg'].present?
+      data.blank? || data['delete_flg'].present? || data['text'].blank?
     end
     Article.import(datum)
   end

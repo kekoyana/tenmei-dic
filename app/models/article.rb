@@ -25,8 +25,8 @@ class Article < ApplicationRecord
     end
 
     def import(hashes)
-      hashes.map(&method(:data_slice))
-            .then { |h| upsert_all_with_timestamp(h) }
+      articles = hashes.map(&method(:by_data))
+      valid_upsert_all(articles)
     end
 
     private

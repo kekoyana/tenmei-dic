@@ -3,6 +3,6 @@
 namespace :master do
   desc 'fetch seed master'
   task fetch: :environment do
-    Article::Fetcher.fetch_articles
+    Article::Fetcher.direct_import
   end
 end
