@@ -19,16 +19,6 @@ RSpec.describe Article, type: :model do
     end
   end
 
-  describe '.category_str2sym' do
-    subject { described_class.category_str2sym(str) }
-
-    let(:str) { '強者' }
-
-    it ':heroが取得できる' do
-      is_expected.to eq :hero
-    end
-  end
-
   describe '.by_data' do
     subject(:instance) { described_class.by_data(data) }
 

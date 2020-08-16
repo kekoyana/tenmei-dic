@@ -4,6 +4,7 @@ require 'rails_helper'
 require 'rake'
 
 describe 'rake task master' do
+  include_context 'stub http master_seed'
   before do
     Rake.application.tasks.each(&:reenable)
   end

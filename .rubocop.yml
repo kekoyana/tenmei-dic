@@ -45,7 +45,7 @@ Metrics/BlockLength:
     - config/environments/*.rb
     - config/routes.rb
     - config/routes/**/*.rb
-    - spec/**/*_spec.rb
+    - spec/**/*.rb
     - spec/factories/*
 
 Metrics/ParameterLists:
