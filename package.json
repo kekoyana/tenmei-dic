@@ -2,7 +2,11 @@
   "name": "tenmei_dic",
   "private": true,
   "dependencies": {
-    "@rails/ujs": "^6.0.0"
+    "@rails/ujs": "^6.0.0",
+    "webpack": "^4.44.1"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "devDependencies": {
+    "webpack-cli": "^3.3.12"
+  }
 }

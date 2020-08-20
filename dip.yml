@@ -12,6 +12,11 @@ interaction:
     compose:
       run_options: [no-deps]
 
+  yarn:
+    description: Run yarn commands
+    service: web
+    command: yarn
+
   bundle:
     description: Run Bundler commands
     service: web
