@@ -10,6 +10,7 @@ gem 'rails', '~> 6.0.3', '>= 6.0.3.2'
 gem 'pg', '>= 0.18', '< 2.0'
 
 gem 'bootsnap'
+gem 'bootstrap', '~> 5.0.0.alpha1'
 gem 'httpclient'
 gem 'oj'
 gem 'puma'
