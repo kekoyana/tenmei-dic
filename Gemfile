@@ -11,6 +11,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 
 gem 'bootsnap'
 gem 'bootstrap', '~> 5.0.0.alpha1'
+gem 'haml-rails'
 gem 'httpclient'
 gem 'oj'
 gem 'puma'
@@ -26,6 +27,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'haml-lint', require: false
   gem 'listen'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
