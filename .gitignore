@@ -27,4 +27,5 @@
 
 spec/examples.txt
 
+node_modules/
 /public/packs
