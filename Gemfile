@@ -15,6 +15,7 @@ gem 'haml-rails'
 gem 'httpclient'
 gem 'oj'
 gem 'puma'
+gem 'simpacker'
 
 group :development, :test do
   gem 'brakeman', require: false
