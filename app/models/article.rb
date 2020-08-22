@@ -40,4 +40,8 @@ class Article < ApplicationRecord
           .merge(category: category_str2sym(data['category']))
     end
   end
+
+  def category_name
+    self.class.enum_hash_i18n(:categories)[category]
+  end
 end
