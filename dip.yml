@@ -32,6 +32,11 @@ interaction:
     service: web
     command: bundle exec yaml-lint -i config/
 
+  haml-lint:
+    description: Run haml-lint commands
+    service: web
+    command: bundle exec haml-lint
+
   rspec:
     description: Run Rspec commands
     service: web

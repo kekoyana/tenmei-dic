@@ -1,5 +1,6 @@
 %h2 記事一覧
 %nav.col-md-2.d-none.d-md-block.bg-light.sidebar
   .sidebar-sticky
-    - @articles.each do |article|
-      = article.name
+    %ol
+      - @articles.each do |article|
+        %li= article.name
