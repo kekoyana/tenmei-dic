@@ -10,9 +10,12 @@ gem 'rails', '~> 6.0.3', '>= 6.0.3.2'
 gem 'pg', '>= 0.18', '< 2.0'
 
 gem 'bootsnap'
+gem 'bootstrap', '~> 5.0.0.alpha1'
+gem 'haml-rails'
 gem 'httpclient'
 gem 'oj'
 gem 'puma'
+gem 'simpacker'
 
 group :development, :test do
   gem 'brakeman', require: false
@@ -25,6 +28,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'haml-lint', require: false
   gem 'listen'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false

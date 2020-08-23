@@ -4,68 +4,80 @@
 #
 version: 2.1
 orbs:
-  ruby: circleci/ruby@0.2.1
+  ruby: circleci/ruby@1.1.1
+  node: circleci/node@4.0.0
 
-defaults: &defaults
-  docker:
-    # specify the version you desire here
-    - image: circleci/ruby:2.7.1-node-browsers
-      environment:
-        - RAILS_ENV: test
-        - BUNDLE_JOBS: 4
-        - DATABASE_URL: postgres://postgres:@127.0.0.1/tenmei_doc_test
+executors:
+  default:
+    docker:
+      # specify the version you desire here
+      - image: circleci/ruby:2.7.1-node-browsers
+        environment:
+          RAILS_ENV: test
+          BUNDLE_JOBS: 4
+          BUNDLE_RETRY: 4
+          BUNDLE_PATH: vendor/bundle
+          BUNDLER_VERSION: 2.1.4
+          DATABASE_URL: postgres://postgres:@127.0.0.1/tenmei_doc_test
 
-    # Specify service dependencies here if necessary
-    # CircleCI maintains a library of pre-built images
-    # documented at https://circleci.com/docs/2.0/circleci-images/
-    - image: circleci/postgres:11-alpine-ram
-      environment:
-        POSTGRES_USER: postgres
-        POSTGRES_DB: tenmei_doc_test
-        POSTGRES_PASSWORD: ""
-
-  working_directory: ~/repo
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      - image: circleci/postgres:11-alpine-ram
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: tenmei_doc_test
+          POSTGRES_PASSWORD: ""
 
 jobs:
-  build:
-    <<: *defaults
+  setup:
+    executor: default
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
       - ruby/install-deps
-      - ruby/save-cache
-
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor/bundle
       # Database setup
       - run: bundle exec rake db:create
       - run: bundle exec rake db:schema:load
 
+  yarn:
+    executor: default
+    steps:
+      - checkout
+      - node/install-packages:
+          cache-path: node_modules
+          pkg-manager: yarn
       - persist_to_workspace:
-          root: ~/repo
+          root: .
           paths:
-            - ./*
+            - node_modules
 
   test:
-    <<: *defaults
+    executor: default
     steps:
-      - attach_workspace:
-          at: ~/repo
-      - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
+      - checkout
       - ruby/install-deps
-      - ruby/run-tests
+      - attach_workspace:
+          at: .
+      - run:
+          command: yarn run webpack
+      - run:
+          command: |
+            bundle exec rspec \
+              --profile \
+              --format RspecJunitFormatter \
+              --out tmp/results/rspec.xml \
+              --format progress
 
   rubocop:
-    <<: *defaults
+    executor: default
     steps:
+      - checkout
       - attach_workspace:
-          at: ~/repo
-      - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
-      - ruby/install-deps
-      # run rubocop
+          at: .
       - run:
           name: run rubocop
           command: |
@@ -76,47 +88,57 @@ jobs:
               -f progress
 
   brakeman:
-    <<: *defaults
+    executor: default
     steps:
+      - checkout
       - attach_workspace:
-          at: ~/repo
-      - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
-      - ruby/install-deps
-      # run brakeman
+          at: .
       - run:
           name: run brakeman
           command: |
             bundle exec brakeman -o /tmp/artifacts/brakeman_output.html
 
   yaml-lint:
-    <<: *defaults
+    executor: default
     steps:
+      - checkout
       - attach_workspace:
-          at: ~/repo
-      - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
-      - ruby/install-deps
-      # run yaml-lint
+          at: .
       - run:
           name: run yaml-lint
           command: |
             bundle exec yaml-lint -i config/
 
+  haml-lint:
+    executor: default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: run haml-lint
+          command: |
+            bundle exec haml-lint app/views
+
 workflows:
-  version: 2
-  build_and_test:
+  version: 2.1
+  build:
     jobs:
-      - build
+      - setup
+      - yarn
       - test:
           requires:
-            - build
+            - setup
+            - yarn
       - rubocop:
           requires:
-            - build
+            - setup
       - brakeman:
           requires:
-            - build
+            - setup
       - yaml-lint:
           requires:
-            - build
+            - setup
+      - haml-lint:
+          requires:
+            - setup
