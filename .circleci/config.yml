@@ -13,9 +13,12 @@ executors:
       # specify the version you desire here
       - image: circleci/ruby:2.7.1-node-browsers
         environment:
-          - RAILS_ENV: test
-          - BUNDLE_JOBS: 4
-          - DATABASE_URL: postgres://postgres:@127.0.0.1/tenmei_doc_test
+          RAILS_ENV: test
+          BUNDLE_JOBS: 4
+          BUNDLE_RETRY: 4
+          BUNDLE_PATH: vendor/bundle
+          BUNDLER_VERSION: 2.1.4
+          DATABASE_URL: postgres://postgres:@127.0.0.1/tenmei_doc_test
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -31,11 +34,11 @@ jobs:
     executor: default
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - run: gem install bundler -v 2.1.4
       - ruby/install-deps
-
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor/bundle
       # Database setup
       - run: bundle exec rake db:create
       - run: bundle exec rake db:schema:load
@@ -45,21 +48,36 @@ jobs:
     steps:
       - checkout
       - node/install-packages:
-          cache-path: ~/node_modules
+          cache-path: node_modules
           pkg-manager: yarn
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
 
   test:
     executor: default
     steps:
-      - run: gem install bundler -v 2.1.4
+      - checkout
       - ruby/install-deps
+      - attach_workspace:
+          at: .
+      - run:
+          command: yarn run webpack
+      - run:
+          command: |
+            bundle exec rspec \
+              --profile \
+              --format RspecJunitFormatter \
+              --out tmp/results/rspec.xml \
+              --format progress
 
   rubocop:
     executor: default
     steps:
-      - run: gem install bundler -v 2.1.4
-      - ruby/install-deps
-      # run rubocop
+      - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: run rubocop
           command: |
@@ -72,9 +90,9 @@ jobs:
   brakeman:
     executor: default
     steps:
-      - run: gem install bundler -v 2.1.4
-      - ruby/install-deps
-      # run brakeman
+      - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: run brakeman
           command: |
@@ -83,9 +101,9 @@ jobs:
   yaml-lint:
     executor: default
     steps:
-      - run: gem install bundler -v 2.1.4
-      - ruby/install-deps
-      # run yaml-lint
+      - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: run yaml-lint
           command: |
@@ -94,13 +112,13 @@ jobs:
   haml-lint:
     executor: default
     steps:
-      - run: gem install bundler -v 2.1.4
-      - ruby/install-deps
-      # run yaml-lint
+      - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: run haml-lint
           command: |
-            bundle exec haml-lint
+            bundle exec haml-lint app/views
 
 workflows:
   version: 2.1
