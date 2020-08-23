@@ -9,35 +9,34 @@ orbs:
 
 executors:
   default:
-    # specify the version you desire here
-    - image: circleci/ruby:2.7.1-node-browsers
-      environment:
-        - RAILS_ENV: test
-        - BUNDLE_JOBS: 4
-        - DATABASE_URL: postgres://postgres:@127.0.0.1/tenmei_doc_test
+    docker:
+      # specify the version you desire here
+      - image: circleci/ruby:2.7.1-node-browsers
+        environment:
+          - RAILS_ENV: test
+          - BUNDLE_JOBS: 4
+          - DATABASE_URL: postgres://postgres:@127.0.0.1/tenmei_doc_test
 
-    # Specify service dependencies here if necessary
-    # CircleCI maintains a library of pre-built images
-    # documented at https://circleci.com/docs/2.0/circleci-images/
-    - image: circleci/postgres:11-alpine-ram
-      environment:
-        POSTGRES_USER: postgres
-        POSTGRES_DB: tenmei_doc_test
-        POSTGRES_PASSWORD: ""
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      - image: circleci/postgres:11-alpine-ram
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: tenmei_doc_test
+          POSTGRES_PASSWORD: ""
 
   working_directory: ~/repo
 
 jobs:
-  build:
+  setup:
     executor: default
     steps:
       - checkout
 
       # Download and cache dependencies
       - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
       - ruby/install-deps
-      - ruby/save-cache
 
       # Database setup
       - run: bundle exec rake db:create
@@ -53,7 +52,7 @@ jobs:
     steps:
       - checkout
       - node/install-packages:
-          cache-key: yarn.lock
+          cache-path: ~/repo/node_modules
           pkg-manager: yarn
 
   test:
@@ -62,9 +61,7 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
       - ruby/install-deps
-      - ruby/run-tests
 
   rubocop:
     executor: default
@@ -72,7 +69,6 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
       - ruby/install-deps
       # run rubocop
       - run:
@@ -90,7 +86,6 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
       - ruby/install-deps
       # run brakeman
       - run:
@@ -104,7 +99,6 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
       - ruby/install-deps
       # run yaml-lint
       - run:
@@ -118,7 +112,6 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: gem install bundler -v 2.1.4
-      - ruby/load-cache
       - ruby/install-deps
       # run yaml-lint
       - run:
@@ -127,23 +120,24 @@ jobs:
             bundle exec haml-lint
 
 workflows:
-  version: 2
-  build_and_test:
+  version: 2.1
+  build:
     jobs:
-      - build
+      - setup
+      - yarn
       - test:
           requires:
-            - build
+            - setup
             - yarn
       - rubocop:
           requires:
-            - build
+            - setup
       - brakeman:
           requires:
-            - build
+            - setup
       - yaml-lint:
           requires:
-            - build
+            - setup
       - haml-lint:
           requires:
-            - build
+            - setup
