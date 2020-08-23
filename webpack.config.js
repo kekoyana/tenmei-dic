@@ -1,5 +1,6 @@
 const path = require("path");
 const WebpackAssetsManifest = require("webpack-assets-manifest");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const { NODE_ENV } = process.env;
 const isProd = NODE_ENV === "production";
@@ -18,5 +19,23 @@ module.exports = {
   resolve: {
     extensions: [".js"]
   },
-  plugins: [new WebpackAssetsManifest({ publicPath: true })]
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          "css-loader"
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new WebpackAssetsManifest({ publicPath: true }),
+    new MiniCssExtractPlugin({
+      filename: isProd ? "[name]-[hash].css" : "[name].css"
+    })
+  ]
 };

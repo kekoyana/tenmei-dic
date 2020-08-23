@@ -1,3 +1,1 @@
-import { hello } from "./greeter";
-
-console.log(hello("Rails"));
+import "./application.css";
