@@ -4,10 +4,11 @@
 #
 version: 2.1
 orbs:
-  ruby: circleci/ruby@0.2.1
+  ruby: circleci/ruby@1.1.1
+  node: circleci/node@4.0.0
 
-defaults: &defaults
-  docker:
+executors:
+  default:
     # specify the version you desire here
     - image: circleci/ruby:2.7.1-node-browsers
       environment:
@@ -28,7 +29,7 @@ defaults: &defaults
 
 jobs:
   build:
-    <<: *defaults
+    executor: default
     steps:
       - checkout
 
@@ -47,8 +48,16 @@ jobs:
           paths:
             - ./*
 
+  yarn:
+    executor: default
+    steps:
+      - checkout
+      - node/install-packages:
+          cache-key: yarn.lock
+          pkg-manager: yarn
+
   test:
-    <<: *defaults
+    executor: default
     steps:
       - attach_workspace:
           at: ~/repo
@@ -58,7 +67,7 @@ jobs:
       - ruby/run-tests
 
   rubocop:
-    <<: *defaults
+    executor: default
     steps:
       - attach_workspace:
           at: ~/repo
@@ -76,7 +85,7 @@ jobs:
               -f progress
 
   brakeman:
-    <<: *defaults
+    executor: default
     steps:
       - attach_workspace:
           at: ~/repo
@@ -90,7 +99,7 @@ jobs:
             bundle exec brakeman -o /tmp/artifacts/brakeman_output.html
 
   yaml-lint:
-    <<: *defaults
+    executor: default
     steps:
       - attach_workspace:
           at: ~/repo
@@ -104,7 +113,7 @@ jobs:
             bundle exec yaml-lint -i config/
 
   haml-lint:
-    <<: *defaults
+    executor: default
     steps:
       - attach_workspace:
           at: ~/repo
@@ -125,6 +134,7 @@ workflows:
       - test:
           requires:
             - build
+            - yarn
       - rubocop:
           requires:
             - build
