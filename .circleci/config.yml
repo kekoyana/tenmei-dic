@@ -26,8 +26,6 @@ executors:
           POSTGRES_DB: tenmei_doc_test
           POSTGRES_PASSWORD: ""
 
-  working_directory: ~/repo
-
 jobs:
   setup:
     executor: default
@@ -42,32 +40,23 @@ jobs:
       - run: bundle exec rake db:create
       - run: bundle exec rake db:schema:load
 
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - ./*
-
   yarn:
     executor: default
     steps:
       - checkout
       - node/install-packages:
-          cache-path: ~/repo/node_modules
+          cache-path: ~/node_modules
           pkg-manager: yarn
 
   test:
     executor: default
     steps:
-      - attach_workspace:
-          at: ~/repo
       - run: gem install bundler -v 2.1.4
       - ruby/install-deps
 
   rubocop:
     executor: default
     steps:
-      - attach_workspace:
-          at: ~/repo
       - run: gem install bundler -v 2.1.4
       - ruby/install-deps
       # run rubocop
@@ -83,8 +72,6 @@ jobs:
   brakeman:
     executor: default
     steps:
-      - attach_workspace:
-          at: ~/repo
       - run: gem install bundler -v 2.1.4
       - ruby/install-deps
       # run brakeman
@@ -96,8 +83,6 @@ jobs:
   yaml-lint:
     executor: default
     steps:
-      - attach_workspace:
-          at: ~/repo
       - run: gem install bundler -v 2.1.4
       - ruby/install-deps
       # run yaml-lint
@@ -109,8 +94,6 @@ jobs:
   haml-lint:
     executor: default
     steps:
-      - attach_workspace:
-          at: ~/repo
       - run: gem install bundler -v 2.1.4
       - ruby/install-deps
       # run yaml-lint
