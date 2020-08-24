@@ -6,7 +6,8 @@
           %a.text-decoration-none{ 'data-toggle': :collapse,
                                    'data-target': "#key#{key.ord}" }
             = key
-        %ul.collapse{ id: "key#{key.ord}" }
+        - show = key == selected_key && 'show'
+        %ul.collapse{ id: "key#{key.ord}", class: show }
           - titles.each do |(id, name, _kana)|
             %li.text-decoration-none
               = link_to name, article_path(id)
