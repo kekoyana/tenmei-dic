@@ -2,6 +2,7 @@
 
 class Article < ApplicationRecord
   extend Importer
+  extend KanaIndex
   validates :name,     presence: true
   validates :kana,     presence: true, kana: true
   validates :category, presence: true
@@ -39,6 +40,10 @@ class Article < ApplicationRecord
       data.slice('id', 'name', 'kana', 'text')
           .merge(category: category_str2sym(data['category']))
     end
+  end
+
+  def kana_index
+    self.class.index_by_kana(kana)
   end
 
   def category_name
