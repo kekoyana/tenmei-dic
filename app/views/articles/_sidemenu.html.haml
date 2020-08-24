@@ -1,0 +1,12 @@
+.container-fluid
+  %nav
+    %ul.list-group.list-group-flush
+      - @set_menu.each do |key, titles|
+        %li.list-group-item
+          %a.text-decoration-none{ 'data-toggle': :collapse,
+                                   'data-target': "#key#{key.ord}" }
+            = key
+        %ul.collapse{ id: "key#{key.ord}" }
+          - titles.each do |(id, name, _kana)|
+            %li.text-decoration-none
+              = link_to name, article_path(id)
