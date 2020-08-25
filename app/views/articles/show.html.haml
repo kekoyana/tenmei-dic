@@ -1,7 +1,7 @@
 .container
   .row
     .col-3
-      = render 'sidemenu'
+      = render 'sidemenu', selected_key: @article.kana_index
 
     .col
       %h1 #{@article.name}(#{@article.kana})
