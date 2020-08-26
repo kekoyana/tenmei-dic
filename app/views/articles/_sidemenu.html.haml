@@ -6,7 +6,7 @@
           %a.text-decoration-none{ 'data-toggle': :collapse,
                                    'data-target': "#key#{key.ord}" }
             = key
-        - show = key == selected_key && 'show'
+        - show = key == local_assigns[:selected_key] && 'show'
         %ul.collapse{ id: "key#{key.ord}", class: show }
           - titles.each do |(id, name, _kana)|
             %li.text-decoration-none
