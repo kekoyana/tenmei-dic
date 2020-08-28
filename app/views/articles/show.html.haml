@@ -4,6 +4,6 @@
       = render 'sidemenu', selected_key: @article.kana_index
 
     .col
-      %h1 #{@article.name}(#{@article.kana})
+      %h2 #{@article.name}(#{@article.kana})
       = @article.category_name
       %p= @article.text
